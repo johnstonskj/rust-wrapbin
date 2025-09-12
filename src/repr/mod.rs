@@ -10,6 +10,7 @@ More detailed description, with
 
 */
 
+use crate::error::Error;
 #[cfg(any(
     feature = "repr-array",
     feature = "repr-base64",
@@ -17,7 +18,6 @@ More detailed description, with
     feature = "repr-string"
 ))]
 use crate::Binary;
-use crate::error::Error;
 use alloc::{format, string::String};
 use core::{
     clone::Clone,
@@ -219,7 +219,7 @@ pub mod color {
     impl ByteStyle {
         pub fn display_style(&self, colored: bool) -> &'static Style {
             if !colored {
-                return &NO_STYLING;
+                &NO_STYLING
             } else {
                 match self {
                     Self::Control => &ASCII_CONTROL,
@@ -234,6 +234,7 @@ pub mod color {
             Self::byte_style(*byte).display_style(colored)
         }
 
+        #[allow(clippy::self_named_constructors)]
         pub fn byte_style(byte: u8) -> Self {
             match byte {
                 0x00..=0x20 => Self::Control,
@@ -251,7 +252,7 @@ pub mod color {
     impl ReprStyle {
         pub fn display_style(&self, colored: bool) -> &'static Style {
             if !colored {
-                return &NO_STYLING;
+                &NO_STYLING
             } else {
                 match self {
                     Self::Prefix => &PREFIX_STYLE,
@@ -268,19 +269,19 @@ pub mod color {
 #[cfg(feature = "repr-array")]
 pub mod array;
 #[cfg(feature = "repr-array")]
-use crate::repr::array::{ArrayFormatOptions, array_representation};
+use crate::repr::array::{array_representation, ArrayFormatOptions};
 
 #[cfg(feature = "repr-base64")]
 pub mod base64;
 #[cfg(feature = "repr-base64")]
-use crate::repr::base64::{Base64FormatOptions, base64_representation};
+use crate::repr::base64::{base64_representation, Base64FormatOptions};
 
 #[cfg(feature = "repr-dump")]
 pub mod dump;
 #[cfg(feature = "repr-dump")]
-use crate::repr::dump::{DumpFormatOptions, dump_representation};
+use crate::repr::dump::{dump_representation, DumpFormatOptions};
 
 #[cfg(feature = "repr-string")]
 pub mod string;
 #[cfg(feature = "repr-string")]
-use crate::repr::string::{StringFormatOptions, string_representation};
+use crate::repr::string::{string_representation, StringFormatOptions};
