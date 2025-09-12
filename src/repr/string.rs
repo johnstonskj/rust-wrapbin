@@ -52,9 +52,9 @@ UpperHexByte
 */
 
 use crate::{
+    Binary,
     error::Error,
     repr::{ByteStyle, RadixFormat, ReprStyle},
-    Binary,
 };
 use alloc::{
     format,

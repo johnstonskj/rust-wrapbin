@@ -1,8 +1,8 @@
 #![cfg(all(feature = "repr-dump", feature = "repr-color"))]
 
 use wrapbin::{
-    repr::dump::{dump_representation, DumpFormatOptions},
     Binary,
+    repr::dump::{DumpFormatOptions, dump_representation},
 };
 
 // ------------------------------------------------------------------------------------------------

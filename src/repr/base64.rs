@@ -3,9 +3,9 @@ A base64 encoding of binary data with optional padding.
 
 */
 
-use crate::{error::Error, Binary};
+use crate::{Binary, error::Error};
 use alloc::string::String;
-use base64::prelude::{Engine as _, BASE64_STANDARD, BASE64_STANDARD_NO_PAD};
+use base64::prelude::{BASE64_STANDARD, BASE64_STANDARD_NO_PAD, Engine as _};
 use core::{
     clone::Clone,
     cmp::{Eq, PartialEq},

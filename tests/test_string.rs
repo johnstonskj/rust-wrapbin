@@ -1,9 +1,9 @@
 use core::num::IntErrorKind;
 use pretty_assertions::assert_eq;
 use wrapbin::{
-    error::Error,
-    repr::string::{parse_string_representation, string_representation, StringFormatOptions},
     Binary,
+    error::Error,
+    repr::string::{StringFormatOptions, parse_string_representation, string_representation},
 };
 
 // ------------------------------------------------------------------------------------------------

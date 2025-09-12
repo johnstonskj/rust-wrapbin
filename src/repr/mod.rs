@@ -10,7 +10,6 @@ More detailed description, with
 
 */
 
-use crate::error::Error;
 #[cfg(any(
     feature = "repr-array",
     feature = "repr-base64",
@@ -18,6 +17,7 @@ use crate::error::Error;
     feature = "repr-string"
 ))]
 use crate::Binary;
+use crate::error::Error;
 use alloc::{format, string::String};
 use core::{
     clone::Clone,
@@ -268,19 +268,19 @@ pub mod color {
 #[cfg(feature = "repr-array")]
 pub mod array;
 #[cfg(feature = "repr-array")]
-use crate::repr::array::{array_representation, ArrayFormatOptions};
+use crate::repr::array::{ArrayFormatOptions, array_representation};
 
 #[cfg(feature = "repr-base64")]
 pub mod base64;
 #[cfg(feature = "repr-base64")]
-use crate::repr::base64::{base64_representation, Base64FormatOptions};
+use crate::repr::base64::{Base64FormatOptions, base64_representation};
 
 #[cfg(feature = "repr-dump")]
 pub mod dump;
 #[cfg(feature = "repr-dump")]
-use crate::repr::dump::{dump_representation, DumpFormatOptions};
+use crate::repr::dump::{DumpFormatOptions, dump_representation};
 
 #[cfg(feature = "repr-string")]
 pub mod string;
 #[cfg(feature = "repr-string")]
-use crate::repr::string::{string_representation, StringFormatOptions};
+use crate::repr::string::{StringFormatOptions, string_representation};

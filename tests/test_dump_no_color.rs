@@ -2,8 +2,8 @@
 
 use pretty_assertions::assert_eq;
 use wrapbin::{
-    repr::dump::{dump_representation, DumpFormatOptions},
     Binary,
+    repr::dump::{DumpFormatOptions, dump_representation},
 };
 
 // ------------------------------------------------------------------------------------------------
