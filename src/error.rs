@@ -90,7 +90,7 @@ impl Display for Error {
                 Self::InvalidArrayBrackets =>
                     "The binary array representation must be correctly enclosed in brackets: '[' and ']'.".to_string(),
                 Self::InvalidByteRepresentation { source } => {
-                    format!("Failed to parse individual byte representation; source error: {}", source)
+                    format!("Failed to parse individual byte representation; source error: {source}")
                 }
             }
         )

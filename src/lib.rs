@@ -49,7 +49,7 @@ More detailed description, with
     // ---------- Unused
     unused, /* group */
     // ---------- Clippy - no_std
-    clippy::alloc_instead_of_core,
+    //clippy::alloc_instead_of_core,
     clippy::std_instead_of_alloc,
     clippy::std_instead_of_core,
 )]
@@ -85,7 +85,7 @@ use alloc::{
     vec::Vec,
 };
 use core::{
-    convert::{AsRef, From, Into},
+    convert::{AsRef, From},
     default::Default,
     error::Error,
     iter::{FromIterator, IntoIterator, Iterator},
@@ -165,18 +165,6 @@ impl<'a> FromIterator<&'a u8> for Binary<'a> {
 // Implementations ❱ Into*
 // ------------------------------------------------------------------------------------------------
 
-impl Into<Vec<u8>> for Binary<'_> {
-    fn into(self) -> Vec<u8> {
-        self.0.into_owned()
-    }
-}
-
-impl<'a> Into<Cow<'a, [u8]>> for Binary<'a> {
-    fn into(self) -> Cow<'a, [u8]> {
-        self.0
-    }
-}
-
 impl IntoIterator for Binary<'_> {
     type Item = u8;
     type IntoIter = alloc::vec::IntoIter<u8>;
@@ -186,12 +174,30 @@ impl IntoIterator for Binary<'_> {
     }
 }
 
+impl<'a> From<Binary<'a>> for Cow<'a, [u8]> {
+    fn from(value: Binary<'a>) -> Self {
+        value.0
+    }
+}
+
+// impl<'a> From<Binary<'a>> for &'a [u8] {
+//     fn from(value: Binary<'a>) -> Self {
+//         value.0
+//     }
+// }
+
+impl<'a> From<Binary<'a>> for Vec<u8> {
+    fn from(value: Binary<'a>) -> Self {
+        value.0.into_owned()
+    }
+}
+
 impl<'a> IntoIterator for &'a Binary<'a> {
     type Item = &'a u8;
     type IntoIter = alloc::slice::Iter<'a, u8>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.0.as_ref().into_iter()
+        self.0.as_ref().iter()
     }
 }
 
@@ -233,7 +239,7 @@ impl Deref for Binary<'_> {
 // ------------------------------------------------------------------------------------------------
 
 #[cfg(feature = "fmt")]
-use crate::repr::array::{ArrayFormatOptions, array_representation};
+use crate::repr::array::{array_representation, ArrayFormatOptions};
 
 #[cfg(feature = "fmt")]
 impl core::fmt::Display for Binary<'_> {

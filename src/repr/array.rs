@@ -42,9 +42,9 @@ UpperHexByte
 */
 
 use crate::{
-    Binary,
     error::Error,
     repr::{ByteStyle, RadixFormat, ReprStyle},
+    Binary,
 };
 use alloc::{
     format,
@@ -59,7 +59,6 @@ use core::{
     fmt::Debug,
     iter::Iterator,
     marker::Copy,
-    matches,
     option::Option::Some,
     result::Result::{self, Err, Ok},
 };
@@ -108,7 +107,7 @@ pub fn array_representation(value: &Binary<'_>, options: &ArrayFormatOptions) ->
             .iter()
             .map(|b| {
                 if options.colored {
-                    let style = ByteStyle::ascii_char_display_style(&b, true);
+                    let style = ByteStyle::ascii_char_display_style(b, true);
                     format!(
                         "{style}{}{style:#}",
                         options.radix_format.format(b, options.compact)
@@ -127,7 +126,7 @@ pub fn parse_array_representation(s: &str) -> Result<Binary<'_>, Error> {
         return Err(Error::MissingRadixPrefix);
     }
     let s = &s[1..];
-    if !s.starts_with(|c| matches!(c, 'b' | 'd' | 'o' | 'x' | 'X')) {
+    if !s.starts_with(['b', 'd', 'o', 'x', 'X']) {
         return Err(Error::InvalidRadixPrefix);
     }
     let radix_char = s.chars().next().unwrap();
