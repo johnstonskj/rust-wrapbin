@@ -239,7 +239,7 @@ impl Deref for Binary<'_> {
 // ------------------------------------------------------------------------------------------------
 
 #[cfg(feature = "fmt")]
-use crate::repr::array::{array_representation, ArrayFormatOptions};
+use crate::repr::array::{ArrayFormatOptions, array_representation};
 
 #[cfg(feature = "fmt")]
 impl core::fmt::Display for Binary<'_> {
