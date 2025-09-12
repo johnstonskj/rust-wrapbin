@@ -1,9 +1,11 @@
+#![cfg(feature = "repr-array")]
+
 use core::num::IntErrorKind;
 use pretty_assertions::assert_eq;
 use wrapbin::{
-    Binary,
     error::Error,
-    repr::array::{ArrayFormatOptions, array_representation, parse_array_representation},
+    repr::array::{array_representation, parse_array_representation, ArrayFormatOptions},
+    Binary,
 };
 
 // ------------------------------------------------------------------------------------------------

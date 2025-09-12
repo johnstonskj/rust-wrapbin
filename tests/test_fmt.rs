@@ -1,3 +1,5 @@
+#![cfg(feature = "fmt")]
+
 use pretty_assertions::assert_eq;
 use wrapbin::Binary;
 
