@@ -1,0 +1,51 @@
+[package]
+authors = ["Simon Johnston <johnstonskj@gmail.com>"]
+name = "wrapbin"
+version = "0.1.0"
+description = """Simple binary newtype as wrapped Cow u8 array."""
+documentation = "https://docs.rs/wrapbin/"
+repository = "https://github.com/johnstonskj/rust-wrapbin.git"
+keywords = ["data-structure", "binary", "no_std", "no-std", "wasm"]
+categories = ["data-structures", "encoding", "no-std", "wasm"]
+license = "MIT/Apache-2.0"
+readme = "README.md"
+edition = "2024"
+publish = true
+
+[package.metadata.docs.rs]
+# This sets the default target to `x86_64-unknown-linux-gnu`
+# and only builds that target for documentation.
+targets = ["x86_64-unknown-linux-gnu"]
+rustdoc-args = ["--generate-link-to-definition"]
+
+[features]
+default = [
+    "alloc",
+    "fmt",
+    "repr-array",
+    "repr-base64",
+    "repr-dump",
+    "repr-string",
+]
+std = ["alloc"]
+alloc = []
+fmt = ["repr-array"]
+repr-array = []
+repr-base64 = ["dep:base64", "std"]
+repr-dump = []
+repr-color = ["dep:anstyle"]
+repr-string = []
+
+[dependencies]
+anstyle = { version = "1.0.11", default-features = false, optional = true }
+base64 = { version = "0.22.1", default-features = false, features = [
+    "alloc",
+], optional = true }
+
+[dev-dependencies]
+pretty_assertions = "1.4.1"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
