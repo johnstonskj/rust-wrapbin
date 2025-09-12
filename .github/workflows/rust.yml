@@ -62,7 +62,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: fmt
-        args: --all -- --check
+        args: --verbose --all -- --check
 
 
   clippy:
@@ -85,7 +85,7 @@ jobs:
     - uses: actions-rs/clippy-check@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        args: --workspace --all-features --all-targets -- -D warnings
+        args: --verbose --workspace --all-features --all-targets -- -D warnings
 
 
   test:
@@ -115,13 +115,13 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: build
-        args: --workspace ${{ matrix.test-features }}
+        args: --verbose --workspace ${{ matrix.test-features }}
 
     - name: Test
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --workspace ${{ matrix.test-features }}
+        args: --verbose --workspace ${{ matrix.test-features }}
 
 
   benchmarks:
@@ -152,7 +152,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --workspace --benches ${{ matrix.test-features }} --no-fail-fast
+        args: --verbose --workspace --benches ${{ matrix.test-features }} --no-fail-fast
 
 
   examples:
@@ -183,7 +183,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --workspace --examples ${{ matrix.test-features }} --no-fail-fast
+        args: --verbose --workspace --examples ${{ matrix.test-features }} --no-fail-fast
 
 
   coverage:   
@@ -206,7 +206,7 @@ jobs:
       uses: actions-rs/tarpaulin@v0.1
       with:
         version: 0.22.0
-        args: --all-features -- --test-threads 1
+        args: --verbose --all-features -- --test-threads 1
 
     - name: Upload to codecov.io
       uses: codecov/codecov-action@v5.5.1
@@ -252,7 +252,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: test
-        args: --workspace ${{ matrix.test-features }} --target ${{ matrix.targets }}
+        args: --verbose --workspace ${{ matrix.test-features }} --target ${{ matrix.targets }}
 
 
   no_std:   
@@ -281,7 +281,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: check
-        args: --workspace ${{ matrix.test-features }} --target ${{ matrix.targets }}
+        args: --verbose --workspace ${{ matrix.test-features }} --target ${{ matrix.targets }}
 ##
 ##    - name: Run Tests
 ##      uses: actions-rs/cargo@v1
@@ -311,7 +311,7 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: doc
-        args: --workspace --all-features --no-deps
+        args: --verbose --workspace --all-features --no-deps
 
 
   publish:
@@ -335,4 +335,4 @@ jobs:
       uses: actions-rs/cargo@v1
       with:
         command: publish
-        args: --dry-run --all-features
+        args: --verbose --dry-run --all-features
