@@ -82,9 +82,9 @@ jobs:
 
     - uses: Swatinem/rust-cache@v2
 
-    - uses: actions-rs/clippy-check@v1
+    - uses: actions-rs/cargo@v1
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        command: clippy
         args: --verbose --message-format=human --workspace --all-features --all-targets -- -D warnings
 
 
