@@ -1,7 +1,10 @@
 /*!
-Simple binary newtype as wrapped Cow u8 array..
+Simple binary *newtype* as wrapped `Cow` (copy-on-write) `u8` (byte) array.
 
-More detailed description, with
+This is intended as a useful abstraction for a binary string, or an array of
+bytes. As such it can be initialized from a `Vec<u8>`, `&[u8]`, or `b""`
+literal or any type implementing Into<
+
 
 # Example
 
@@ -87,12 +90,9 @@ use alloc::{
 use core::{
     convert::{AsRef, From},
     default::Default,
-    error::Error,
     iter::{FromIterator, IntoIterator, Iterator},
-    marker::Sized,
     ops::Deref,
     option::Option,
-    result::Result,
 };
 #[cfg(feature = "fmt")]
 use core::{
@@ -101,34 +101,14 @@ use core::{
 };
 
 // ------------------------------------------------------------------------------------------------
-// Public Types
+// Public Type ❱ Binary
 // ------------------------------------------------------------------------------------------------
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Binary<'a>(Cow<'a, [u8]>);
 
-pub trait IntoBinary<'a, T> {
-    fn into(self) -> Binary<'a>;
-}
-
-pub trait FromBinary {
-    type Error: Error;
-
-    fn from(binary: Binary<'_>) -> Result<Self, Self::Error>
-    where
-        Self: Sized;
-}
-
 // ------------------------------------------------------------------------------------------------
-// Public Functions
-// ------------------------------------------------------------------------------------------------
-
-pub fn into_binary<'a, T: IntoBinary<'a, T>>(value: T) -> Binary<'a> {
-    value.into()
-}
-
-// ------------------------------------------------------------------------------------------------
-// Implementations ❱ From*
+// Implementations ❱ From* => Binary
 // ------------------------------------------------------------------------------------------------
 
 impl<'a> From<Cow<'a, [u8]>> for Binary<'a> {
@@ -162,7 +142,7 @@ impl<'a> FromIterator<&'a u8> for Binary<'a> {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Implementations ❱ Into*
+// Implementations ❱ Binary => Into*
 // ------------------------------------------------------------------------------------------------
 
 impl IntoIterator for Binary<'_> {
@@ -179,12 +159,6 @@ impl<'a> From<Binary<'a>> for Cow<'a, [u8]> {
         value.0
     }
 }
-
-// impl<'a> From<Binary<'a>> for &'a [u8] {
-//     fn from(value: Binary<'a>) -> Self {
-//         value.0
-//     }
-// }
 
 impl<'a> From<Binary<'a>> for Vec<u8> {
     fn from(value: Binary<'a>) -> Self {
@@ -322,7 +296,7 @@ impl core::fmt::UpperHex for Binary<'_> {
 }
 
 // ------------------------------------------------------------------------------------------------
-// Implementation
+// Implementation ❱ Binary
 // ------------------------------------------------------------------------------------------------
 
 impl Binary<'_> {

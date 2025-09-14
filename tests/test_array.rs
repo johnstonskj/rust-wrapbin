@@ -3,9 +3,9 @@
 use core::num::IntErrorKind;
 use pretty_assertions::assert_eq;
 use wrapbin::{
-    error::Error,
-    repr::array::{array_representation, parse_array_representation, ArrayFormatOptions},
     Binary,
+    error::Error,
+    repr::array::{ArrayFormatOptions, array_representation, parse_array_representation},
 };
 
 // ------------------------------------------------------------------------------------------------
