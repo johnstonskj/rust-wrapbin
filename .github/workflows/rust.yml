@@ -202,10 +202,14 @@ jobs:
 
     - uses: Swatinem/rust-cache@v2
 
+    - name: Install Tarpaulin
+      run: cargo install cargo-tarpaulin
+
     - name: Run cargo-tarpaulin
-      uses: actions-rs/tarpaulin@v0.1
+      uses: actions-rs/cargo@v1
       with:
-        args: --verbose --all-features -- --test-threads 1
+        command: tarpaulin
+        args: --verbose --workspace --all-features --out Xml -- --test-threads 1
 
     - name: Upload to codecov.io
       uses: codecov/codecov-action@v5.5.1
