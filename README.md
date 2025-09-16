@@ -6,7 +6,7 @@ Simple binary _newtype_ as wrapped `Cow` (copy-on-write) `u8` (byte) array.
 [![MIT License](https://img.shields.io/badge/license-mit-118811.svg)](https://opensource.org/license/mit)
 [![Rust Workflow](https://github.com/johnstonskj/rust-wrapbin/actions/workflows/rust.yml/badge.svg)](<https://github.com/johnstonskj/rust-wrapbin/actions/workflows/rust.yml>)
 [![Security Audit Workflow](https://github.com/johnstonskj/rust-wrapbin/actions/workflows/security-audit.yml/badge.svg)](<https://github.com/johnstonskj/rust-wrapbin/actions/workflows/security-audit.yml>)
-[![Coverage Status](https://app.codecov.io/github/johnstonskj/rust-wrapbin/branch/main/graph/badge.svg?token=1HGN6M4KIT)](<https://app.codecov.io/github/johnstonskj/rust-wrapbin>)
+[![Coverage Status](https://codecov.io/github/johnstonskj/rust-wrapbin/graph/badge.svg?token=TcyByrr7By)](<https://codecov.io/github/johnstonskj/rust-wrapbin>)
 [![crates.io](https://img.shields.io/crates/v/wrapbin.svg)](https://crates.io/crates/wrapbin)
 [![docs.rs](https://docs.rs/xml_dom/badge.svg)](https://docs.rs/wrapbin)
 [![GitHub stars](https://img.shields.io/github/stars/johnstonskj/rust-wrapbin.svg)](<https://github.com/johnstonskj/rust-wrapbin/stargazers>)
