@@ -1,22 +1,20 @@
 /*!
 Simple binary *newtype* as wrapped `Cow` (copy-on-write) `u8` (byte) array.
 
-This is intended as a useful abstraction for a binary string, or an array of
-bytes. As such it can be initialized from a `Vec<u8>`, `&[u8]`, or `b""`
-literal or any type implementing Into<
-
-
-# Example
-
-```rust
-```
+This simple wrapper allows for conversion from different types that provide
+`as_bytes`, `to_bytes`, `into_bytes` and other methods into a common `Binary`
+type. By choosing to use `Cow<[u8]>` as the implementation, we can also respect
+the manner in which we received the bytes from the providing type/value. So,
+where a `&str` value has `as_bytes()` returning `&[u8]` we store the borrowed
+value; however, where a `String`'s `into_bytes()` method returns `Vec<u8>` we
+store the owned value.
 
 # Features
 
 - **alloc**; Requires the Rust `alloc` crate when built as `no_std`. **Default**.
 - **std**; Build with the standard library.
 - **fmt**; Adds support for the format specifiers in the `std::fmt` module:
-  `Binary`, `LowerHex`, `Octal`, and `UpperHex`. This requires the
+  `Binary`, `LowerHex`, `Octal`, and `UpperHex`. This **requires** the
   *repr-array* feature. **Default**.
 - Representation formats:
   - **repr-array**; Array representation; e.g. `0x[01, 0e, b2, 8c]`. **Default**.
@@ -24,6 +22,111 @@ literal or any type implementing Into<
   - **repr-dump**; Dump representation.
   - **repr-string**; String representation; e.g. `0x"01_0e_b2_8c"`.
   - **repr-color**; Adds color to the representations above.
+
+# Examples
+
+## Construction
+
+Store bytes from three string types.
+
+```rust
+use wrapbin::Binary;
+
+let bin_1 = Binary::from("Hello World!".to_string());
+let bin_2 = Binary::from("Hello World!");
+let bin_3 = Binary::from(b"Hello World!");
+assert_eq!(bin_1, bin_2);
+assert_eq!(bin_2, bin_3);
+```
+
+While this is relatively obvious for ASCII characters such as those above the
+byte mapping isn't quite so straightforward for more complex scripts with
+multi-byte characters *and* multi-glyph, stacking, characters (one single
+character below is actually four).
+
+```rust
+use wrapbin::Binary;
+
+let binary = Binary::from("༄༏ༀ་མ་ཎིཔ་དྨེ་ཧྤུྂ།།");
+assert_eq!(binary.len(), 60);
+```
+
+## Feature `fmt`
+
+When the feature `fmt` is enabled the `Binary` type also supports display
+formatting using standard Rust numeric format specifiers 'b', 'o', 'x' and
+'X'.
+
+```rust
+use wrapbin::Binary;
+
+let binary = Binary::from("Hello World!");
+
+assert_eq!(
+    format!("{binary:b}"),
+    "0b[01001000, 01100101, 01101100, 01101100, 01101111, 00100000, 01010111, 01101111, 01110010, 01101100, 01100100, 00100001]"
+);
+assert_eq!(
+    format!("{binary:o}"),
+    "0o[110, 145, 154, 154, 157, 040, 127, 157, 162, 154, 144, 041]"
+);
+assert_eq!(
+    format!("{binary}"),
+    "0d[072, 101, 108, 108, 111, 032, 087, 111, 114, 108, 100, 033]"
+);
+assert_eq!(
+    format!("{binary:x}"),
+    "0x[48, 65, 6c, 6c, 6f, 20, 57, 6f, 72, 6c, 64, 21]"
+);
+assert_eq!(
+    format!("{binary:X}"),
+    "0X[48, 65, 6C, 6C, 6F, 20, 57, 6F, 72, 6C, 64, 21]"
+);
+```
+
+The '#' flag for alternate representation enables *compact* mode which
+removes spaces and padding from the generated output. The formatted output
+uses the Array representation enabled by the `repr-array` feature.
+
+```rust
+use wrapbin::Binary;
+
+let binary = Binary::from("Hello World!");
+
+assert_eq!(
+    format!("{binary:#b}"),
+    "0b[1001000,1100101,1101100,1101100,1101111,100000,1010111,1101111,1110010,1101100,1100100,100001]"
+);
+assert_eq!(
+    format!("{binary:#o}"),
+    "0o[110,145,154,154,157,40,127,157,162,154,144,41]"
+);
+assert_eq!(
+    format!("{binary:#}"),
+    "0d[72,101,108,108,111,32,87,111,114,108,100,33]"
+);
+assert_eq!(
+    format!("{binary:#x}"),
+    "0x[48,65,6c,6c,6f,20,57,6f,72,6c,64,21]"
+);
+assert_eq!(
+    format!("{binary:#X}"),
+    "0X[48,65,6C,6C,6F,20,57,6F,72,6C,64,21]"
+);
+```
+
+## Feature `repr-base64`
+
+TBD
+
+## Feature `repr-dump`
+
+TBD
+
+## Feature `repr-string`
+
+TBD
+
 */
 
 #![warn(
@@ -121,6 +224,18 @@ impl<'a> From<Cow<'a, [u8]>> for Binary<'a> {
 impl From<Vec<u8>> for Binary<'_> {
     fn from(value: Vec<u8>) -> Self {
         Self(Cow::Owned(value))
+    }
+}
+
+impl<'a, const N: usize> From<&'a [u8; N]> for Binary<'a> {
+    fn from(value: &'a [u8; N]) -> Self {
+        Self(Cow::Borrowed(value))
+    }
+}
+
+impl<const N: usize> From<[u8; N]> for Binary<'_> {
+    fn from(value: [u8; N]) -> Self {
+        Self(Cow::Owned(value.to_vec()))
     }
 }
 
