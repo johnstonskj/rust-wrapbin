@@ -1,0 +1,18 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 5%
+
+component_management:
+  individual_components:
+    - component_id: error
+      name: Error Management
+      paths:
+        - src/error.rs
+
+    - component_id: repr
+      name: Representations
+      paths:
+        - src/repr/**
