@@ -200,6 +200,8 @@ jobs:
         toolchain: stable
         override: true
 
+    - name: Add OpenSSL
+      run: sudo apt install libssl1.1
     - uses: Swatinem/rust-cache@v2
 
     - name: Run cargo-tarpaulin
