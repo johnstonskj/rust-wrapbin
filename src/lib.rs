@@ -85,6 +85,7 @@ extern crate alloc;
 
 use alloc::{
     borrow::{Borrow, Cow},
+    string::String,
     vec::Vec,
 };
 use core::{
@@ -108,7 +109,7 @@ use core::{
 pub struct Binary<'a>(Cow<'a, [u8]>);
 
 // ------------------------------------------------------------------------------------------------
-// Implementations ❱ From* => Binary
+// Implementations ❱ From/Into Binary inner representations
 // ------------------------------------------------------------------------------------------------
 
 impl<'a> From<Cow<'a, [u8]>> for Binary<'a> {
@@ -129,31 +130,6 @@ impl<'a> From<&'a [u8]> for Binary<'a> {
     }
 }
 
-impl FromIterator<u8> for Binary<'_> {
-    fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
-        Self(Cow::Owned(iter.into_iter().collect()))
-    }
-}
-
-impl<'a> FromIterator<&'a u8> for Binary<'a> {
-    fn from_iter<T: IntoIterator<Item = &'a u8>>(iter: T) -> Self {
-        Self(Cow::Owned(iter.into_iter().copied().collect()))
-    }
-}
-
-// ------------------------------------------------------------------------------------------------
-// Implementations ❱ Binary => Into*
-// ------------------------------------------------------------------------------------------------
-
-impl IntoIterator for Binary<'_> {
-    type Item = u8;
-    type IntoIter = alloc::vec::IntoIter<u8>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_owned().into_iter()
-    }
-}
-
 impl<'a> From<Binary<'a>> for Cow<'a, [u8]> {
     fn from(value: Binary<'a>) -> Self {
         value.0
@@ -166,12 +142,177 @@ impl<'a> From<Binary<'a>> for Vec<u8> {
     }
 }
 
+// ------------------------------------------------------------------------------------------------
+// Implementations ❱ From/Into Byte Iterators
+// ------------------------------------------------------------------------------------------------
+
+impl FromIterator<u8> for Binary<'_> {
+    fn from_iter<T: IntoIterator<Item = u8>>(iter: T) -> Self {
+        Self(Cow::Owned(iter.into_iter().collect()))
+    }
+}
+
+impl<'a> FromIterator<&'a u8> for Binary<'a> {
+    fn from_iter<T: IntoIterator<Item = &'a u8>>(iter: T) -> Self {
+        Self(Cow::Owned(iter.into_iter().copied().collect()))
+    }
+}
+
+impl IntoIterator for Binary<'_> {
+    type Item = u8;
+    type IntoIter = alloc::vec::IntoIter<u8>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_owned().into_iter()
+    }
+}
+
 impl<'a> IntoIterator for &'a Binary<'a> {
     type Item = &'a u8;
     type IntoIter = alloc::slice::Iter<'a, u8>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.as_ref().iter()
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+// Implementations ❱ From Binary adjacent types
+// ------------------------------------------------------------------------------------------------
+
+impl From<String> for Binary<'_> {
+    fn from(value: String) -> Self {
+        Binary::from(value.into_bytes())
+    }
+}
+
+impl<'a, 'b: 'a> From<&'b str> for Binary<'a> {
+    fn from(value: &'b str) -> Self {
+        Binary::from(value.as_bytes())
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+// Implementations ❱ From Primative types
+// ------------------------------------------------------------------------------------------------
+
+impl From<u8> for Binary<'_> {
+    fn from(value: u8) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<u16> for Binary<'_> {
+    fn from(value: u16) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<u32> for Binary<'_> {
+    fn from(value: u32) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<u64> for Binary<'_> {
+    fn from(value: u64) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<u128> for Binary<'_> {
+    fn from(value: u128) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<usize> for Binary<'_> {
+    fn from(value: usize) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<i8> for Binary<'_> {
+    fn from(value: i8) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<i16> for Binary<'_> {
+    fn from(value: i16) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<i32> for Binary<'_> {
+    fn from(value: i32) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<i64> for Binary<'_> {
+    fn from(value: i64) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<i128> for Binary<'_> {
+    fn from(value: i128) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<isize> for Binary<'_> {
+    fn from(value: isize) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<f32> for Binary<'_> {
+    fn from(value: f32) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<f64> for Binary<'_> {
+    fn from(value: f64) -> Self {
+        Binary::from(value.to_ne_bytes().to_vec())
+    }
+}
+
+impl From<char> for Binary<'_> {
+    fn from(value: char) -> Self {
+        let mut buffer = [0_u8; 4];
+        value.encode_utf8(&mut buffer);
+        Binary::from(buffer.to_vec())
+    }
+}
+
+impl From<bool> for Binary<'_> {
+    fn from(value: bool) -> Self {
+        Binary::from(u8::from(value))
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
+// Implementations ❱ From useful library types
+// ------------------------------------------------------------------------------------------------
+
+impl From<core::net::Ipv4Addr> for Binary<'_> {
+    fn from(value: core::net::Ipv4Addr) -> Self {
+        Binary::from(value.octets().to_vec())
+    }
+}
+
+impl From<core::net::Ipv6Addr> for Binary<'_> {
+    fn from(value: core::net::Ipv6Addr) -> Self {
+        Binary::from(value.octets().to_vec())
+    }
+}
+
+impl<'a, 'b: 'a> From<&'b core::ffi::CStr> for Binary<'a> {
+    fn from(value: &'b core::ffi::CStr) -> Self {
+        Binary::from(value.to_bytes_with_nul())
     }
 }
 
