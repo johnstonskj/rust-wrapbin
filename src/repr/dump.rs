@@ -46,7 +46,7 @@ RadixChar ::= '0' ( 'o' | 'x' | 'X' | 'd' | ' ' )
 use crate::{
     Binary,
     error::Error,
-    repr::{ByteStyle, RadixFormat, ReprStyle},
+    repr::{BinaryFormatOptions, ByteStyle, RadixFormat, ReprStyle},
 };
 use alloc::{
     format,
@@ -170,6 +170,12 @@ pub fn parse_dump_representation(_s: &str) -> Result<Binary<'_>, Error> {
 // Implementations
 // ------------------------------------------------------------------------------------------------
 
+impl From<DumpFormatOptions> for BinaryFormatOptions {
+    fn from(value: DumpFormatOptions) -> Self {
+        Self::Dump(value)
+    }
+}
+
 impl Default for DumpFormatOptions {
     fn default() -> Self {
         Self {
@@ -259,26 +265,30 @@ impl DumpFormatOptions {
             .show_ascii(false)
     }
 
+    /// Sets the radix format for each byte in the array to be one of the values of the enum
+    /// [`RadixFormat`].
     pub fn with_byte_radix_format(mut self, radix_format: RadixFormat) -> Self {
         self.radix_format = radix_format;
         self
     }
+    /// Sets the radix format for each byte in the array to [`RadixFormat::Binary`].
     pub fn with_binary_bytes(self) -> Self {
         Self::with_byte_radix_format(self, RadixFormat::Binary)
     }
+    /// Sets the radix format for each byte in the array to [`RadixFormat::Decimal`].
     pub fn with_decimal_bytes(self) -> Self {
         Self::with_byte_radix_format(self, RadixFormat::Decimal)
     }
+    /// Sets the radix format for each byte in the array to [`RadixFormat::LowerHex`].
     pub fn with_lower_hex_bytes(self) -> Self {
         Self::with_byte_radix_format(self, RadixFormat::LowerHex)
     }
+    /// Sets the radix format for each byte in the array to [`RadixFormat::Octal`].
     pub fn with_octal_bytes(self) -> Self {
         Self::with_byte_radix_format(self, RadixFormat::Octal)
     }
+    /// Sets the radix format for each byte in the array to [`RadixFormat::UpperHex`].
     pub fn with_upper_hex_bytes(self) -> Self {
-        Self::with_byte_radix_format(self, RadixFormat::UpperHex)
-    }
-    pub fn with_hex_bytes(self) -> Self {
         Self::with_byte_radix_format(self, RadixFormat::UpperHex)
     }
 
@@ -307,23 +317,26 @@ impl DumpFormatOptions {
         self
     }
 
+    /// Sets the radix format for line and column indices to be one of the values
+    /// of the enum [`RadixFormat`].
     pub fn with_index_radix_format(mut self, index_radix_format: RadixFormat) -> Self {
         self.index_radix_format = index_radix_format;
         self
     }
+    /// Sets the radix format for line and column indices to [`RadixFormat::Decimal`].
     pub fn with_decimal_indices(self) -> Self {
         Self::with_index_radix_format(self, RadixFormat::Decimal)
     }
+    /// Sets the radix format for line and column indices to [`RadixFormat::LowerHex`].
     pub fn with_lower_hex_indices(self) -> Self {
         Self::with_index_radix_format(self, RadixFormat::LowerHex)
     }
+    /// Sets the radix format for line and column indices to [`RadixFormat::Octal`].
     pub fn with_octal_indices(self) -> Self {
         Self::with_index_radix_format(self, RadixFormat::Octal)
     }
+    /// Sets the radix format for line and column indices to [`RadixFormat::UpperHex`].
     pub fn with_upper_hex_indices(self) -> Self {
-        Self::with_index_radix_format(self, RadixFormat::UpperHex)
-    }
-    pub fn with_hex_indices(self) -> Self {
         Self::with_index_radix_format(self, RadixFormat::UpperHex)
     }
 
@@ -366,13 +379,15 @@ impl DumpFormatOptions {
         self
     }
 
+    /// Use color to denote byte kind according the ASCII conventions denoted by the
+    /// enums `ByteStyle` and `ReprStyle`.
     #[cfg(feature = "repr-color")]
     pub fn use_color(mut self, colored: bool) -> Self {
         self.colored = colored;
         self
     }
 
-    fn byte_counts(&self) -> (usize, usize) {
+    const fn byte_counts(&self) -> (usize, usize) {
         match (self.two_columns, self.column_width) {
             (false, w @ DumpColumnWidth::Eight) => (0, w.byte_count()),
             (true, w @ DumpColumnWidth::Eight) => (w.byte_count(), w.two_column_byte_count()),
@@ -451,7 +466,7 @@ impl DumpFormatOptions {
         )
     }
 
-    fn line_index_width(&self) -> usize {
+    const fn line_index_width(&self) -> usize {
         match self.index_radix_format {
             RadixFormat::Decimal | RadixFormat::Octal => 8,
             RadixFormat::LowerHex | RadixFormat::UpperHex => 6,
@@ -486,7 +501,7 @@ impl DumpFormatOptions {
         }
     }
 
-    fn data_value_width(&self) -> usize {
+    const fn data_value_width(&self) -> usize {
         match self.radix_format {
             RadixFormat::Binary => 8,
             RadixFormat::Decimal | RadixFormat::Octal => 3,
@@ -607,12 +622,12 @@ impl DumpFormatOptions {
 
 impl DumpColumnWidth {
     #[inline(always)]
-    pub fn byte_count(&self) -> usize {
+    pub const fn byte_count(&self) -> usize {
         *self as usize
     }
 
     #[inline(always)]
-    pub fn two_column_byte_count(&self) -> usize {
+    pub const fn two_column_byte_count(&self) -> usize {
         self.byte_count() * 2
     }
 }

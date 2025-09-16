@@ -3,7 +3,7 @@ A base64 encoding of binary data with optional padding.
 
 */
 
-use crate::{Binary, error::Error};
+use crate::{Binary, error::Error, repr::BinaryFormatOptions};
 use alloc::string::String;
 use base64::prelude::{BASE64_STANDARD, BASE64_STANDARD_NO_PAD, Engine as _};
 use core::{
@@ -44,7 +44,14 @@ pub fn parse_base64_representation(s: &str) -> Result<Binary<'_>, Error> {
 // Implementations
 // ------------------------------------------------------------------------------------------------
 
+impl From<Base64FormatOptions> for BinaryFormatOptions {
+    fn from(value: Base64FormatOptions) -> Self {
+        Self::Base64(value)
+    }
+}
+
 impl Base64FormatOptions {
+    /// Use a compact representation, this turns off standard base64 padding.
     pub fn compact(mut self, compact: bool) -> Self {
         self.compact = compact;
         self
