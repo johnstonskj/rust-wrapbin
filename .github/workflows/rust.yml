@@ -200,15 +200,12 @@ jobs:
         toolchain: stable
         override: true
 
-    - name: Add OpenSSL
-      run: sudo apt-get update && sudo apt-get install -y libssl-dev
-
     - uses: Swatinem/rust-cache@v2
 
     - name: Run cargo-tarpaulin
       uses: actions-rs/tarpaulin@v0.1
       with:
-        version: 0.22.0
+        version: 0.32.8
         args: --verbose --all-features -- --test-threads 1
 
     - name: Upload to codecov.io
