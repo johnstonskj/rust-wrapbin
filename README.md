@@ -26,7 +26,7 @@ For information on contributing to this project, see the following.
 1. Project [TODO Items](<https://github.com/johnstonskj/rust-wrapbin/issues>) in Issues.
 1. Repository [Change Log](https://github.com/johnstonskj/rust-wrapbin/blob/main/CHANGELOG.md).
 
-# Features
+## Features
 
 - **alloc**; Requires the Rust `alloc` crate when built as `no_std`. **Default**.
 - **std**; Build with the standard library.
@@ -40,9 +40,9 @@ For information on contributing to this project, see the following.
   - **repr-string**; String representation; e.g. `0x"01_0e_b2_8c"`.
   - **repr-color**; Adds color to the representations above.
 
-# Examples
+## Examples
 
-## Construction
+### Construction
 
 Store bytes from three string types.
 
@@ -68,7 +68,7 @@ let binary = Binary::from("༄༏ༀ་མ་ཎིཔ་དྨེ་ཧྤུ�
 assert_eq!(binary.len(), 60);
 ```
 
-## Feature `fmt`
+### Feature `fmt`
 
 When the feature `fmt` is enabled the `Binary` type also supports display
 formatting using standard Rust numeric format specifiers 'b', 'o', 'x' and
@@ -136,7 +136,7 @@ assert_eq!(
 
 Current Coverage map:
 
-<https://codecov.io/github/johnstonskj/rust-wrapbin/graphs/icicle.svg?token=TcyByrr7By>
+![Project Coverage Icicle Graph](<https://codecov.io/github/johnstonskj/rust-wrapbin/graphs/icicle.svg?token=TcyByrr7By>)
 
 ## License(s)
 
