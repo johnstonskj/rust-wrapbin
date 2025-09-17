@@ -24,12 +24,15 @@
 //!
 //! # Examples
 //!
-#![cfg_attr(not(feature = "repr-dump"), doc = "```ignore")]
 #![cfg_attr(
     any(
-        all(feature = "repr-dump", not(feature = "repr-color")),
+        not(feature = "repr-dump"),
         all(feature = "repr-dump", feature = "repr-color")
     ),
+    doc = "```ignore"
+)]
+#![cfg_attr(
+    all(feature = "repr-dump", not(feature = "repr-color")),
     doc = "```rust"
 )]
 //! use wrapbin::{

@@ -34,12 +34,15 @@
 //!
 #![cfg_attr(
     any(
-        all(feature = "repr-dump", not(feature = "repr-color")),
+        not(feature = "repr-dump"),
         all(feature = "repr-dump", feature = "repr-color")
     ),
+    doc = "```ignore"
+)]
+#![cfg_attr(
+    all(feature = "repr-dump", not(feature = "repr-color")),
     doc = "```rust"
 )]
-#![cfg_attr(not(feature = "repr-array"), doc = "```ignore")]
 //! use wrapbin::{
 //!     Binary,
 //!     repr::{array::ArrayFormatOptions, BinaryFormatOptions, format}
@@ -63,12 +66,15 @@
 //!
 #![cfg_attr(
     any(
-        all(feature = "repr-dump", not(feature = "repr-color")),
+        not(feature = "repr-dump"),
         all(feature = "repr-dump", feature = "repr-color")
     ),
+    doc = "```ignore"
+)]
+#![cfg_attr(
+    all(feature = "repr-dump", not(feature = "repr-color")),
     doc = "```rust"
 )]
-#![cfg_attr(not(feature = "repr-string"), doc = "```ignore")]
 //! use wrapbin::{
 //!     Binary,
 //!     repr::{BinaryFormatOptions, format, string::StringFormatOptions}
@@ -115,12 +121,15 @@
 //!
 #![cfg_attr(
     any(
-        all(feature = "repr-dump", not(feature = "repr-color")),
+        not(feature = "repr-dump"),
         all(feature = "repr-dump", feature = "repr-color")
     ),
+    doc = "```ignore"
+)]
+#![cfg_attr(
+    all(feature = "repr-dump", not(feature = "repr-color")),
     doc = "```rust"
 )]
-#![cfg_attr(not(feature = "repr-dump"), doc = "```ignore")]
 //! use wrapbin::{
 //!     Binary,
 //!     repr::{BinaryFormatOptions, dump::DumpFormatOptions, format}
