@@ -9,34 +9,19 @@
 //!         | LowerHexArrayRepr | UpperHexArrayRepr
 //!
 //! BinaryArrayRepr
-//!     ::= '0b' '[' [ BinaryByte { ',' BinaryByte } ] ']'
-//!
-//! BinaryByte
-//!     ::= [0-1]{1-8}
+//!     ::= BinaryPrefixString '[' [ BinaryByte { ',' BinaryByte } ] ']'
 //!
 //! DecimalArrayRepr
-//!     ::= '0d' '[' [ DecimalByte { ',' DecimalByte } ] ']'
-//!
-//! DecimalByte
-//!     ::= [09]{1-3}
+//!     ::= DecimalPrefixString '[' [ DecimalByte { ',' DecimalByte } ] ']'
 //!
 //! OctalArrayRepr
-//!     ::= '0o' '[' [ OctalByte { ',' OctalByte } ] ']'
-//!
-//! OctalByte
-//!     ::= [0-7]{1-3}
+//!     ::= OctalStringRepr '[' [ OctalByte { ',' OctalByte } ] ']'
 //!
 //! LowerHexArrayRepr
-//!     ::= '0x' '[' [ LowerHexByte { ',' LowerHexByte } ] ']'
-//!
-//! LowerHexByte
-//!     ::= [0-9a-f]{1-2}
+//!     ::= LowerHexPrefixString '[' [ LowerHexByte { ',' LowerHexByte } ] ']'
 //!
 //! UpperHexArrayRepr
-//!     ::= '0X' '[' [ UpperHexByte { ',' UpperHexByte } ] ']'
-//!
-//! UpperHexByte
-//!     ::= [0-9A-F]{1-2}
+//!     ::= UpperHexPrefixString '[' [ UpperHexByte { ',' UpperHexByte } ] ']'
 //! ```
 //!
 //! # Examples

@@ -1,6 +1,35 @@
 //!
 //! Provides formatting of `Binary` values.
 //!
+//! # Representation Descriptions
+//!
+//! Common definitions
+//!
+//! ```ebnf
+//! PrefixString            ::= BinaryPrefixString | DecimalPrefixString
+//!                           | OctalStringRepr | LowerHexPrefixString
+//!                           | UpperHexPrefixString
+//! BinaryPrefixString      ::= PrefixSignalChar 'b'
+//! DecimalPrefixString     ::= PrefixSignalChar ''
+//! OctalStringRepr         ::= PrefixSignalChar 'o'
+//! LowerHexPrefixString    ::= PrefixSignalChar 'x'
+//! UpperHexPrefixString    ::= PrefixSignalChar 'X'
+//! PrefixSignalChar        ::= '0'
+//! ```
+//!
+//! ```ebnf
+//! BinaryByte              ::= [0-1]{1-8}
+//! FixedBinaryByte         ::= [0-1]{8}
+//! DecimalByte             ::= [09]{1-3}
+//! FixedDecimalByte        ::= [09]{3}
+//! OctalByte               ::= [0-7]{1-3}
+//! FixedOctalByte          ::= [0-7]{3}
+//! LowerHexByte            ::= [0-9a-f]{1-2}
+//! FixedLowerHexByte       ::= [0-9a-f]{2}
+//! UpperHexByte            ::= [0-9A-F]{1-2}
+//! FixedUpperHexByte       ::= [0-9A-F]{2}
+//! ```
+//!
 //! # Example Array Representation
 //!
 #![cfg_attr(
@@ -232,7 +261,8 @@ pub fn format<O: Into<BinaryFormatOptions>>(value: &Binary<'_>, options: O) -> S
 
 impl RadixFormat {
     ///
-    ///
+    /// Return a formatted prefix string for the current radix. This string is comprised of the
+    /// character '0' followed by the radix identifying character.
     ///
     pub fn prefix_str(&self) -> &'static str {
         match self {
@@ -245,7 +275,21 @@ impl RadixFormat {
     }
 
     ///
-    /// Format a single byte.
+    /// Return the radix identifying character; one of 'b', 'd', 'o', 'x', or 'X'.
+    ///
+    pub fn prefix_char(&self) -> char {
+        match self {
+            RadixFormat::Binary => 'b',
+            RadixFormat::Decimal => 'd',
+            RadixFormat::LowerHex => 'd',
+            RadixFormat::Octal => 'o',
+            RadixFormat::UpperHex => 'X',
+        }
+    }
+
+    ///
+    /// Format a single byte according to the current radix and whether to pad to a
+    /// fixed width or use a *compact* form.
     ///
     pub fn format(&self, byte: &u8, compact: bool) -> String {
         match (self, compact) {

@@ -9,44 +9,44 @@
 //!         | LowerHexStringRepr | UpperHexStringRepr
 //!
 //! BinaryStringRepr
-//!     ::= '0b' '"' [
-//!             BinaryByte ( { '_' BinaryByte } | { BinaryByte } )
+//!     ::= BinaryPrefixString '"' [
+//!             (
+//!               ( BinaryByte { '_' BinaryByte } )
+//!             | ( FixedBinaryByte { FixedBinaryByte } )
+//!             )
 //!         ] '"'
-//!
-//! BinaryByte
-//!     ::= [0-1]{1-8}
 //!
 //! DecimalStringRepr
-//!     ::= '0d' '"' [
-//!             DecimalByte ( { '_' DecimalByte } | { DecimalByte } )
+//!     ::= DecimalPrefixString '"' [
+//!             (
+//!               ( DecimalByte { '_' DecimalByte } )
+//!             | ( FixedDecimalByte { FixedDecimalByte } )
+//!             )
 //!         ] '"'
-//!
-//! DecimalByte
-//!     ::= [09]{1-3}
 //!
 //! OctalStringRepr
-//!     ::= '0o' '"' [
-//!             OctalByte ( { '_' OctalByte } | { OctalByte } )
+//!     ::= 'OctalPrefixString '"' [
+//!             (
+//!               ( OctalByte { '_' OctalByte }
+//!             | ( FixedOctalByte { FixedOctalByte } )
+//!             )
 //!         ] '"'
-//!
-//! OctalByte
-//!     ::= [0-7]{1-3}
 //!
 //! LowerHexStringRepr
-//!     ::= '0x' '"' [
-//!             LowerHexByte ( { '_' LowerHexByte } | { LowerHexByte } )
+//!     ::= LowerHexPrefixString '"' [
+//!             (
+//!               ( LowerHexByte { '_' LowerHexByte } )
+//!               | FixedLowerHexByte { FixedLowerHexByte } )
+//!             )
 //!         ] '"'
-//!
-//! LowerHexByte
-//!     ::= [0-9a-f]{1-2}
 //!
 //! UpperHexStringRepr
-//!     ::= '0X' '"' [
-//!             UpperHexByte ( { '_' UpperHexByte } | { UpperHexByte } )
+//!     ::= UpperHexPrefixString '"' [
+//!             (
+//!               ( UpperHexByte { '_' UpperHexByte } )
+//!             | ( FixedUpperHexByte { FixedUpperHexByte } )
+//!             )
 //!         ] '"'
-//!
-//! UpperHexByte
-//!     ::= [0-9A-F]{1-2}
 //! ```
 //!
 //! # Examples

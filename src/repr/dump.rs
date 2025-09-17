@@ -4,7 +4,7 @@
 //! ```ebnf
 //! DumpRepresentation ::= [ HeaderLine ] { '\n' DataLine }
 //!
-//! HeaderLine ::= RadixChar ' '{4-7} (Column8   | Column16   | Column32  |
+//! HeaderLine ::= PrefixString ' '{4-7} (Column8   | Column16   | Column32  |
 //!                          Column2C8 | Column2C16 | Column2C32)
 //!
 //! DataLine ::= LineIndex  (Column8   | Column16   | Column32  |
@@ -20,8 +20,6 @@
 //!
 //! Byte ::= Nybble Nybble Nybble?
 //! Nybble ::= [0-9a-fA-F]
-//!
-//! RadixChar ::= '0' ( 'o' | 'x' | 'X' | 'd' | ' ' )
 //! ```
 //!
 //! # Examples
