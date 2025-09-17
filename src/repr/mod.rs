@@ -3,8 +3,14 @@
 //!
 //! # Example Array Representation
 //!
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
 #![cfg_attr(not(feature = "repr-array"), doc = "```ignore")]
-#![cfg_attr(feature = "repr-array", doc = "```rust")]
 //! use wrapbin::{
 //!     Binary,
 //!     repr::{array::ArrayFormatOptions, BinaryFormatOptions, format}
@@ -26,8 +32,14 @@
 //!
 //! # Example String Representation
 //!
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
 #![cfg_attr(not(feature = "repr-string"), doc = "```ignore")]
-#![cfg_attr(feature = "repr-string", doc = "```rust")]
 //! use wrapbin::{
 //!     Binary,
 //!     repr::{BinaryFormatOptions, format, string::StringFormatOptions}
@@ -53,7 +65,7 @@
 #![cfg_attr(feature = "repr-base64", doc = "```rust")]
 //! use wrapbin::{
 //!     Binary,
-//!     repr::{BinaryFormatOptions, format, base64::Base64FormatOptions}
+//!     repr::{BinaryFormatOptions, base64::Base64FormatOptions, format}
 //! };
 //!
 //! let binary = Binary::from([
@@ -72,11 +84,17 @@
 //!
 //! # Example Dump Representation
 //!
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
 #![cfg_attr(not(feature = "repr-dump"), doc = "```ignore")]
-#![cfg_attr(feature = "repr-dump", doc = "```rust")]
 //! use wrapbin::{
 //!     Binary,
-//!     repr::{BinaryFormatOptions, format, dump::DumpFormatOptions}
+//!     repr::{BinaryFormatOptions, dump::DumpFormatOptions, format}
 //! };
 //!
 //! let binary = Binary::from([
@@ -89,7 +107,11 @@
 //!     format(
 //!         &binary,
 //!         DumpFormatOptions::classic_hex_dump()),
-//!     "0X       00 01 02 03 04 05 06 07 - 08 09 0A 0B 0C 0D 0E 0F \n000000:  7B E6 D4 F2 25 5C 62 D3 - 21 24 AB 7E 40 F1 7B CE \n000010:  17 3C 08 D2 D1 CE CC 17 - ".to_string(),
+//!     vec![
+//!         "0X       00 01 02 03 04 05 06 07 - 08 09 0A 0B 0C 0D 0E 0F ",
+//!         "000000:  7B E6 D4 F2 25 5C 62 D3 - 21 24 AB 7E 40 F1 7B CE ",
+//!         "000010:  17 3C 08 D2 D1 CE CC 17 - ",
+//!     ].join("\n")
 //! );
 //! ```
 //!
@@ -116,12 +138,20 @@ use core::{
 // Public Types
 // ------------------------------------------------------------------------------------------------
 
+///
+/// The Radix to use in representing bytes/octets in representation of binary data.
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum RadixFormat {
+    /// Represent each byte in radix-2, binary.
     Binary,
-    Decimal,
-    LowerHex,
+    /// Represent each byte in radix-8, octal.
     Octal,
+    /// Represent each byte in radix-10, decimal.
+    Decimal,
+    /// Represent each byte in radix-16, hex with lower-case alpha characters.
+    LowerHex,
+    /// Represent each byte in radix-16, hex with upper-case alpha characters.
     #[default]
     UpperHex,
 }
@@ -138,27 +168,45 @@ pub enum BinaryFormatOptions {
     String(StringFormatOptions),
 }
 
+///
+/// A classification for bytes based on ASCII 7-bit and 8-bit standardization.
+///
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ByteStyle {
+pub enum ByteKind {
+    /// A control character, this for some reason includes the ASCII space character.
     Control,
+    /// A 7-bit ASCII printable character.
     Printable,
+    /// An 8-bit (extended) ASCII printable character.
     PrintableExtended,
+    /// An 8-bit (extended) ASCII undefined character
     Undefined,
 }
 
+///
+/// A classification of the components makingup a representation form.
+///
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ReprStyle {
+pub enum ReprComponentKind {
+    /// The prefix component that corresponds to the regular expression `(:?(?<radix>0[bdoxX]))`.
     Prefix,
+    /// These are usually start/end pairs such as the `[` and `]` of an array or the `"` for strings.
     Delimiter,
+    /// These are usually inter-byte separators such as `,` or `_`.
     Separator,
+    /// Index values in the dump format that provide line and column numbers.
     Index,
-    Value(ByteStyle),
+    /// Actual data bytes.
+    Value(ByteKind),
 }
 
 // ------------------------------------------------------------------------------------------------
 // Public Functions
 // ------------------------------------------------------------------------------------------------
 
+///
+/// This function ...
+///
 #[cfg(any(
     feature = "repr-array",
     feature = "repr-base64",
@@ -183,6 +231,9 @@ pub fn format<O: Into<BinaryFormatOptions>>(value: &Binary<'_>, options: O) -> S
 // ------------------------------------------------------------------------------------------------
 
 impl RadixFormat {
+    ///
+    ///
+    ///
     pub fn prefix_str(&self) -> &'static str {
         match self {
             RadixFormat::Binary => "0b",
@@ -193,6 +244,9 @@ impl RadixFormat {
         }
     }
 
+    ///
+    /// Format a single byte.
+    ///
     pub fn format(&self, byte: &u8, compact: bool) -> String {
         match (self, compact) {
             (RadixFormat::Binary, true) => format!("{byte:b}"),
@@ -207,6 +261,9 @@ impl RadixFormat {
             (RadixFormat::UpperHex, false) => format!("{byte:02X}"),
         }
     }
+    ///
+    /// Attempt to parse a simgle character as a radix specifier.
+    ///
     pub fn from(specifier: Option<char>) -> Result<Self, Error> {
         match specifier {
             None => Ok(Self::default()),
@@ -218,6 +275,9 @@ impl RadixFormat {
             _ => Err(Error::InvalidRepresentation),
         }
     }
+    ///
+    /// Return the radix, as an integer, for the format specifier.
+    ///
     pub fn radix(&self) -> u32 {
         match self {
             RadixFormat::Binary => 2,
@@ -226,6 +286,9 @@ impl RadixFormat {
             RadixFormat::LowerHex | RadixFormat::UpperHex => 16,
         }
     }
+    ///
+    /// Return the maximum number of digits required for the given radix.
+    ///
     pub fn max_width(&self) -> usize {
         match self {
             RadixFormat::Binary => 8,
@@ -239,14 +302,19 @@ impl RadixFormat {
 // Modules
 // ------------------------------------------------------------------------------------------------
 
+#[inline(always)]
+pub const fn has_color() -> bool {
+    cfg!(feature = "repr-color")
+}
+
 #[doc(hidden)]
 #[cfg(not(feature = "repr-color"))]
 pub mod color {
-    use crate::repr::{ByteStyle, ReprStyle};
+    use crate::repr::{ByteKind, ReprComponentKind};
 
     pub type Style = str;
 
-    impl ByteStyle {
+    impl ByteKind {
         #[inline(always)]
         pub const fn display_style(&self, _: bool) -> &'static Style {
             ""
@@ -261,7 +329,7 @@ pub mod color {
         }
     }
 
-    impl ReprStyle {
+    impl ReprComponentKind {
         #[inline(always)]
         pub const fn display_style(&self, _: bool) -> &'static Style {
             ""
@@ -272,7 +340,7 @@ pub mod color {
 #[doc(hidden)]
 #[cfg(feature = "repr-color")]
 pub mod color {
-    use crate::repr::{ByteStyle, ReprStyle};
+    use crate::repr::{ByteKind, ReprComponentKind};
     use anstyle::{AnsiColor, Color};
     use core::option::Option::Some;
 
@@ -302,7 +370,7 @@ pub mod color {
     // Implementations
     // --------------------------------------------------------------------------------------------
 
-    impl ByteStyle {
+    impl ByteKind {
         pub const fn display_style(&self, colored: bool) -> &'static Style {
             if !colored {
                 &NO_STYLING
@@ -335,7 +403,7 @@ pub mod color {
         }
     }
 
-    impl ReprStyle {
+    impl ReprComponentKind {
         pub const fn display_style(&self, colored: bool) -> &'static Style {
             if !colored {
                 &NO_STYLING

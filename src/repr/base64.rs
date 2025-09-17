@@ -1,7 +1,29 @@
-/*!
-A base64 encoding of binary data with optional padding.
-
-*/
+//!
+//! A standard base64 encoding of binary data with optional padding.
+//!
+//! # Examples
+//!
+#![cfg_attr(not(feature = "repr-base64"), doc = "```ignore")]
+#![cfg_attr(feature = "repr-base64", doc = "```rust")]
+//! use wrapbin::{
+//!     Binary,
+//!     repr::{BinaryFormatOptions, format, base64::Base64FormatOptions}
+//! };
+//!
+//! let binary = Binary::from([
+//!     0x7b_u8,0xe6_u8,0xd4_u8,0xf2_u8,0x25_u8,0x5c_u8,0x62_u8,0xd3_u8,
+//!     0x21_u8,0x24_u8,0xab_u8,0x7e_u8,0x40_u8,0xf1_u8,0x7b_u8,0xce_u8,
+//!     0x17_u8,0x3c_u8,0x08_u8,0xd2_u8,0xd1_u8,0xce_u8,0xcc_u8,0x17_u8,
+//! ]);
+//!
+//! assert_eq!(
+//!     format(
+//!         &binary,
+//!         Base64FormatOptions::default()),
+//!     "e+bU8iVcYtMhJKt+QPF7zhc8CNLRzswX".to_string(),
+//! );
+//! ```
+//!
 
 use crate::{Binary, error::Error, repr::BinaryFormatOptions};
 use alloc::string::String;

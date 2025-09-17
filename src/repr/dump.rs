@@ -1,52 +1,67 @@
-/*!
-Hexadecimal dump of a file.
-
-```text
-X     00 01 02 03 04 05 06 07 - 08 09 0A 0B 0C 0D 0E 0F
-000:  4C 6F 72 65 6D 20 69 70 - 73 75 6D 20 64 6F 6C 6F
-010:  72 20 73 69 74 20 61 6D - 65 74 2C 20 63 6F 6E 73
-020:  65 63 74 65 74 75 72 20 - 61 64 69 70 69 73 63 69
-030:  6E 67 20 65 6C 69 74 2C - 20 73 65 64 20 64 6F 20
-040:  65 69 75 73 6D 6F 64 20 - 74 65 6D 70 6F 72 20 69
-050:  6E 63 69 64 69 64 75 6E - 74 20 75 74 20 6C 61 62
-060:  6F 72 65 20 65 74 20 64 - 6F 6C 6F 72 65 20 6D 61
-070:  67 6E 61 20 61 6C 69 71 - 75 61 2E 20 55 74 20 65
-080:  6E 69 6D 20 61 64 20 6D - 69 6E 69 6D 20 76 65 6E
-090:  69 61 6D 2C 20 71 75 69 - 73 20 6E 6F 73 74 72 75
-0A0:  64 20 65 78 65 72 63 69 - 74 61 74 69 6F 6E 20 75
-0B0:  6C 6C 61 6D 63 6F 20 6C - 61 62 6F 72 69 73 20 6E
-0C0:  69 73 69 20 75 74 20 61 - 6C 69 71
-```
-
-```ebnf
-DumpRepresentation ::= [ HeaderLine ] { '\n' DataLine }
-
-HeaderLine ::= RadixChar ' '{4-7} (Column8   | Column16   | Column32  |
-                         Column2C8 | Column2C16 | Column2C32)
-
-DataLine ::= LineIndex  (Column8   | Column16   | Column32  |
-                         Column2C8 | Column2C16 | Column2C32)
-LineIndex ::= Nybble{3-6} ': '
-
-Column8 ::= Byte ( ' ' Byte ){0-7}
-Column2C8 ::= Column8 [ ' - ' Column8 ]
-Column16 ::= Byte ( ' ' Byte ){0-15}
-Column2C16 ::= Column16 [ ' - ' Column16 ]
-Column32 ::= Byte ( ' ' Byte ){0-31}
-Column2C32 ::= Column32 [ ' - ' Column32 ]
-
-Byte ::= Nybble Nybble Nybble?
-Nybble ::= [0-9a-fA-F]
-
-RadixChar ::= '0' ( 'o' | 'x' | 'X' | 'd' | ' ' )
-```
-
-*/
+//!
+//! Hexadecimal dump of a file.
+//!
+//! ```ebnf
+//! DumpRepresentation ::= [ HeaderLine ] { '\n' DataLine }
+//!
+//! HeaderLine ::= RadixChar ' '{4-7} (Column8   | Column16   | Column32  |
+//!                          Column2C8 | Column2C16 | Column2C32)
+//!
+//! DataLine ::= LineIndex  (Column8   | Column16   | Column32  |
+//!                          Column2C8 | Column2C16 | Column2C32)
+//! LineIndex ::= Nybble{3-6} ': '
+//!
+//! Column8 ::= Byte ( ' ' Byte ){0-7}
+//! Column2C8 ::= Column8 [ ' - ' Column8 ]
+//! Column16 ::= Byte ( ' ' Byte ){0-15}
+//! Column2C16 ::= Column16 [ ' - ' Column16 ]
+//! Column32 ::= Byte ( ' ' Byte ){0-31}
+//! Column2C32 ::= Column32 [ ' - ' Column32 ]
+//!
+//! Byte ::= Nybble Nybble Nybble?
+//! Nybble ::= [0-9a-fA-F]
+//!
+//! RadixChar ::= '0' ( 'o' | 'x' | 'X' | 'd' | ' ' )
+//! ```
+//!
+//! # Examples
+//!
+#![cfg_attr(not(feature = "repr-dump"), doc = "```ignore")]
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
+//! use wrapbin::{
+//!     Binary,
+//!     repr::{BinaryFormatOptions, dump::DumpFormatOptions, format, has_color}
+//! };
+//!
+//! let binary = Binary::from([
+//!     0x7b_u8,0xe6_u8,0xd4_u8,0xf2_u8,0x25_u8,0x5c_u8,0x62_u8,0xd3_u8,
+//!     0x21_u8,0x24_u8,0xab_u8,0x7e_u8,0x40_u8,0xf1_u8,0x7b_u8,0xce_u8,
+//!     0x17_u8,0x3c_u8,0x08_u8,0xd2_u8,0xd1_u8,0xce_u8,0xcc_u8,0x17_u8,
+//! ]);
+//!
+//! assert_eq!(
+//!     format(
+//!         &binary,
+//!         DumpFormatOptions::classic_hex_dump()),
+//!     vec![
+//!         "0X       00 01 02 03 04 05 06 07 - 08 09 0A 0B 0C 0D 0E 0F ",
+//!         "000000:  7B E6 D4 F2 25 5C 62 D3 - 21 24 AB 7E 40 F1 7B CE ",
+//!         "000010:  17 3C 08 D2 D1 CE CC 17 - ",
+//!     ].join("\n")
+//! );
+//! ```
+//!
 
 use crate::{
     Binary,
     error::Error,
-    repr::{BinaryFormatOptions, ByteStyle, RadixFormat, ReprStyle},
+    repr::{BinaryFormatOptions, ByteKind, RadixFormat, ReprComponentKind},
 };
 use alloc::{
     format,
@@ -399,7 +414,7 @@ impl DumpFormatOptions {
     }
 
     fn format_column_index(&self, index: usize) -> String {
-        let style = ReprStyle::Index.display_style(self.colored);
+        let style = ReprComponentKind::Index.display_style(self.colored);
         match self.radix_format {
             RadixFormat::Binary => {
                 format!(
@@ -443,7 +458,7 @@ impl DumpFormatOptions {
         if let Some(underline) = self.column_index_underline {
             let width =
                 (self.data_value_width() + self.value_spacing.len()) * self.column_width as usize;
-            let style = ReprStyle::Separator.display_style(self.colored);
+            let style = ReprComponentKind::Separator.display_style(self.colored);
             let underline = format!("{style}{}{style:#}", underline.to_string().repeat(width));
             let mut buffer = String::default();
             buffer.push_str(&underline);
@@ -459,7 +474,7 @@ impl DumpFormatOptions {
     }
 
     fn format_column_separator(&self) -> String {
-        let style = ReprStyle::Separator.display_style(self.colored);
+        let style = ReprComponentKind::Separator.display_style(self.colored);
         format!(
             "{style}{}{}{style:#}",
             self.column_separator, self.value_spacing
@@ -475,7 +490,7 @@ impl DumpFormatOptions {
     }
 
     fn format_line_index(&self, index: usize) -> String {
-        let style = ReprStyle::Index.display_style(self.colored);
+        let style = ReprComponentKind::Index.display_style(self.colored);
         match self.index_radix_format {
             RadixFormat::Decimal => format!(
                 "{style}{index:0width$}{spacer}{style:#}",
@@ -510,7 +525,7 @@ impl DumpFormatOptions {
     }
 
     fn format_data_value(&self, byte: u8) -> String {
-        let style = ByteStyle::ascii_char_display_style(&byte, self.colored);
+        let style = ByteKind::ascii_char_display_style(&byte, self.colored);
         match self.radix_format {
             RadixFormat::Binary => {
                 format!(
@@ -599,7 +614,7 @@ impl DumpFormatOptions {
             0xA1..=0xAC | 0xAE..=0xFF => Some(*byte as char),
             _ => None, // Non-printable characters
         };
-        let style = ByteStyle::ascii_char_display_style(byte, self.colored);
+        let style = ByteKind::ascii_char_display_style(byte, self.colored);
         if let Some(c) = decoded_char {
             format!(
                 "{style}{c:0$}{style:#}{spacing}",

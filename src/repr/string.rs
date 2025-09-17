@@ -1,60 +1,88 @@
-/*!
-A string-like representation of binary data, underscore-separated and enclosed in double quotes
-with an identifying radix prefix. Note that the *compact* representation **does not allow**
-underscores and so **all** bytes **must** be the same width with leading zeros as necessary.
-
-```ebnf
-StringRepresentation
-    ::= BinaryStringRepr | DecimalStringRepr | OctalStringRepr
-        | LowerHexStringRepr | UpperHexStringRepr
-
-BinaryStringRepr
-    ::= '0b' '"' [
-            BinaryByte ( { '_' BinaryByte } | { BinaryByte } )
-        ] '"'
-
-BinaryByte
-    ::= [0-1]{1-8}
-
-DecimalStringRepr
-    ::= '0d' '"' [
-            DecimalByte ( { '_' DecimalByte } | { DecimalByte } )
-        ] '"'
-
-DecimalByte
-    ::= [09]{1-3}
-
-OctalStringRepr
-    ::= '0o' '"' [
-            OctalByte ( { '_' OctalByte } | { OctalByte } )
-        ] '"'
-
-OctalByte
-    ::= [0-7]{1-3}
-
-LowerHexStringRepr
-    ::= '0x' '"' [
-            LowerHexByte ( { '_' LowerHexByte } | { LowerHexByte } )
-        ] '"'
-
-LowerHexByte
-    ::= [0-9a-f]{1-2}
-
-UpperHexStringRepr
-    ::= '0X' '"' [
-            UpperHexByte ( { '_' UpperHexByte } | { UpperHexByte } )
-        ] '"'
-
-UpperHexByte
-    ::= [0-9A-F]{1-2}
-```
-
-*/
+//!
+//! A string-like representation of binary data, underscore-separated and enclosed in double quotes
+//! with an identifying radix prefix. Note that the *compact* representation **does not allow**
+//! underscores and so **all** bytes **must** be the same width with leading zeros as necessary.
+//!
+//! ```ebnf
+//! StringRepresentation
+//!     ::= BinaryStringRepr | DecimalStringRepr | OctalStringRepr
+//!         | LowerHexStringRepr | UpperHexStringRepr
+//!
+//! BinaryStringRepr
+//!     ::= '0b' '"' [
+//!             BinaryByte ( { '_' BinaryByte } | { BinaryByte } )
+//!         ] '"'
+//!
+//! BinaryByte
+//!     ::= [0-1]{1-8}
+//!
+//! DecimalStringRepr
+//!     ::= '0d' '"' [
+//!             DecimalByte ( { '_' DecimalByte } | { DecimalByte } )
+//!         ] '"'
+//!
+//! DecimalByte
+//!     ::= [09]{1-3}
+//!
+//! OctalStringRepr
+//!     ::= '0o' '"' [
+//!             OctalByte ( { '_' OctalByte } | { OctalByte } )
+//!         ] '"'
+//!
+//! OctalByte
+//!     ::= [0-7]{1-3}
+//!
+//! LowerHexStringRepr
+//!     ::= '0x' '"' [
+//!             LowerHexByte ( { '_' LowerHexByte } | { LowerHexByte } )
+//!         ] '"'
+//!
+//! LowerHexByte
+//!     ::= [0-9a-f]{1-2}
+//!
+//! UpperHexStringRepr
+//!     ::= '0X' '"' [
+//!             UpperHexByte ( { '_' UpperHexByte } | { UpperHexByte } )
+//!         ] '"'
+//!
+//! UpperHexByte
+//!     ::= [0-9A-F]{1-2}
+//! ```
+//!
+//! # Examples
+//!
+#![cfg_attr(not(feature = "repr-string"), doc = "```ignore")]
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
+//! use wrapbin::{
+//!     Binary,
+//!     repr::{BinaryFormatOptions, format, string::StringFormatOptions}
+//! };
+//!
+//! let binary = Binary::from([
+//!     0x7b_u8,0xe6_u8,0xd4_u8,0xf2_u8,0x25_u8,0x5c_u8,0x62_u8,0xd3_u8,
+//!     0x21_u8,0x24_u8,0xab_u8,0x7e_u8,0x40_u8,0xf1_u8,0x7b_u8,0xce_u8,
+//!     0x17_u8,0x3c_u8,0x08_u8,0xd2_u8,0xd1_u8,0xce_u8,0xcc_u8,0x17_u8,
+//! ]);
+//!
+//! assert_eq!(
+//!     format(
+//!         &binary,
+//!         StringFormatOptions::default().compact(true)),
+//!     r#"0X"7BE6D4F2255C62D32124AB7E40F17BCE173C08D2D1CECC17""#.to_string(),
+//! );
+//! ```
+//!
 
 use crate::{
     Binary,
     error::Error,
-    repr::{BinaryFormatOptions, ByteStyle, RadixFormat, ReprStyle},
+    repr::{BinaryFormatOptions, ByteKind, RadixFormat, ReprComponentKind},
 };
 use alloc::{
     format,
@@ -89,19 +117,19 @@ pub struct StringFormatOptions {
 
 pub fn string_representation(value: &Binary<'_>, options: &StringFormatOptions) -> String {
     let prefix = if options.colored {
-        let style = ReprStyle::Prefix.display_style(true);
+        let style = ReprComponentKind::Prefix.display_style(true);
         format!("{style}{}{style:#}", options.radix_format.prefix_str(),)
     } else {
         options.radix_format.prefix_str().to_string()
     };
     let quote = if options.colored {
-        let style = ReprStyle::Delimiter.display_style(true);
+        let style = ReprComponentKind::Delimiter.display_style(true);
         format!("{style}\"{style:#}")
     } else {
         '"'.to_string()
     };
     let underscore = if options.colored {
-        let style = ReprStyle::Separator.display_style(true);
+        let style = ReprComponentKind::Separator.display_style(true);
         format!("{style}_{style:#}")
     } else {
         '_'.to_string()
@@ -110,7 +138,7 @@ pub fn string_representation(value: &Binary<'_>, options: &StringFormatOptions) 
         // do not use variable width compact representation as compact depends
         // on knowing the width of each radix byte.
         if options.colored {
-            let style = ByteStyle::ascii_char_display_style(b, true);
+            let style = ByteKind::ascii_char_display_style(b, true);
             format!("{style}{}{style:#}", options.radix_format.format(b, false))
         } else {
             options.radix_format.format(b, false).to_string()

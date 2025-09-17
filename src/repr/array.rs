@@ -1,50 +1,131 @@
-/*!
-An array-like representation of binary data, comma-separated and enclosed in square brackets with
-an identifying radix prefix. The *compact* representation **does not** allow whitespace after
-commas or between bytes and the enclosing brackets.
-
-```ebnf
-ArrayRepresentation
-    ::= BinaryArrayRepr | DecimalArrayRepr | OctalArrayRepr
-        | LowerHexArrayRepr | UpperHexArrayRepr
-
-BinaryArrayRepr
-    ::= '0b' '[' [ BinaryByte { ',' BinaryByte } ] ']'
-
-BinaryByte
-    ::= [0-1]{1-8}
-
-DecimalArrayRepr
-    ::= '0d' '[' [ DecimalByte { ',' DecimalByte } ] ']'
-
-DecimalByte
-    ::= [09]{1-3}
-
-OctalArrayRepr
-    ::= '0o' '[' [ OctalByte { ',' OctalByte } ] ']'
-
-OctalByte
-    ::= [0-7]{1-3}
-
-LowerHexArrayRepr
-    ::= '0x' '[' [ LowerHexByte { ',' LowerHexByte } ] ']'
-
-LowerHexByte
-    ::= [0-9a-f]{1-2}
-
-UpperHexArrayRepr
-    ::= '0X' '[' [ UpperHexByte { ',' UpperHexByte } ] ']'
-
-UpperHexByte
-    ::= [0-9A-F]{1-2}
-```
-
-*/
+//!
+//! An array-like representation of binary data, comma-separated and enclosed in square brackets with
+//! an identifying radix prefix. The *compact* representation **does not** allow whitespace after
+//! commas or between bytes and the enclosing brackets.
+//!
+//! ```ebnf
+//! ArrayRepresentation
+//!     ::= BinaryArrayRepr | DecimalArrayRepr | OctalArrayRepr
+//!         | LowerHexArrayRepr | UpperHexArrayRepr
+//!
+//! BinaryArrayRepr
+//!     ::= '0b' '[' [ BinaryByte { ',' BinaryByte } ] ']'
+//!
+//! BinaryByte
+//!     ::= [0-1]{1-8}
+//!
+//! DecimalArrayRepr
+//!     ::= '0d' '[' [ DecimalByte { ',' DecimalByte } ] ']'
+//!
+//! DecimalByte
+//!     ::= [09]{1-3}
+//!
+//! OctalArrayRepr
+//!     ::= '0o' '[' [ OctalByte { ',' OctalByte } ] ']'
+//!
+//! OctalByte
+//!     ::= [0-7]{1-3}
+//!
+//! LowerHexArrayRepr
+//!     ::= '0x' '[' [ LowerHexByte { ',' LowerHexByte } ] ']'
+//!
+//! LowerHexByte
+//!     ::= [0-9a-f]{1-2}
+//!
+//! UpperHexArrayRepr
+//!     ::= '0X' '[' [ UpperHexByte { ',' UpperHexByte } ] ']'
+//!
+//! UpperHexByte
+//!     ::= [0-9A-F]{1-2}
+//! ```
+//!
+//! # Examples
+//!
+#![cfg_attr(not(feature = "repr-array"), doc = "```ignore")]
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
+//! use wrapbin::{
+//!     Binary,
+//!     repr::{array::ArrayFormatOptions, BinaryFormatOptions, format}
+//! };
+//!
+//! let binary = Binary::from([
+//!     0x7b_u8,0xe6_u8,0xd4_u8,0xf2_u8,0x25_u8,0x5c_u8,0x62_u8,0xd3_u8,
+//!     0x21_u8,0x24_u8,0xab_u8,0x7e_u8,0x40_u8,0xf1_u8,0x7b_u8,0xce_u8,
+//!     0x17_u8,0x3c_u8,0x08_u8,0xd2_u8,0xd1_u8,0xce_u8,0xcc_u8,0x17_u8,
+//! ]);
+//!
+//! assert_eq!(
+//!     format(
+//!         &binary,
+//!         ArrayFormatOptions::default()),
+//!     "0X[7B, E6, D4, F2, 25, 5C, 62, D3, 21, 24, AB, 7E, 40, F1, 7B, CE, 17, 3C, 08, D2, D1, CE, CC, 17]"
+//!         .to_string(),
+//! );
+//! ```
+//!
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
+#![cfg_attr(not(feature = "repr-array"), doc = "```ignore")]
+//! use wrapbin::{
+//!     Binary,
+//!     repr::{array::ArrayFormatOptions, BinaryFormatOptions, format}
+//! };
+//!
+//! let binary = Binary::from([
+//!     0x7b_u8,0xe6_u8,0xd4_u8,0xf2_u8,0x25_u8,0x5c_u8,0x62_u8,0xd3_u8,
+//! ]);
+//!
+//! assert_eq!(
+//!     format(
+//!         &binary,
+//!         ArrayFormatOptions::default().with_binary_bytes()),
+//!     "0b[01111011, 11100110, 11010100, 11110010, 00100101, 01011100, 01100010, 11010011]"
+//!         .to_string(),
+//! );
+//! ```
+//!
+#![cfg_attr(not(feature = "repr-array"), doc = "```ignore")]
+#![cfg_attr(
+    any(
+        all(feature = "repr-dump", not(feature = "repr-color")),
+        all(feature = "repr-dump", feature = "repr-color")
+    ),
+    doc = "```rust"
+)]
+//! use wrapbin::{
+//!     Binary,
+//!     repr::{array::ArrayFormatOptions, BinaryFormatOptions, format}
+//! };
+//!
+//! let binary = Binary::from([
+//!     0x7b_u8,0xe6_u8,0xd4_u8,0xf2_u8,0x25_u8,0x5c_u8,0x62_u8,0xd3_u8,
+//! ]);
+//!
+//! assert_eq!(
+//!     format(
+//!         &binary,
+//!         ArrayFormatOptions::default().with_octal_bytes()),
+//!     "0o[173, 346, 324, 362, 045, 134, 142, 323]"
+//!         .to_string(),
+//! );
+//! ```
+//!
 
 use crate::{
     Binary,
     error::Error,
-    repr::{BinaryFormatOptions, ByteStyle, RadixFormat, ReprStyle},
+    repr::{BinaryFormatOptions, ByteKind, RadixFormat, ReprComponentKind},
 };
 use alloc::{
     format,
@@ -80,19 +161,19 @@ pub struct ArrayFormatOptions {
 
 pub fn array_representation(value: &Binary<'_>, options: &ArrayFormatOptions) -> String {
     let prefix = if options.colored {
-        let style = ReprStyle::Prefix.display_style(true);
+        let style = ReprComponentKind::Prefix.display_style(true);
         format!("{style}{}{style:#}", options.radix_format.prefix_str(),)
     } else {
         options.radix_format.prefix_str().to_string()
     };
     let (left_paren, right_paren) = if options.colored {
-        let style = ReprStyle::Delimiter.display_style(true);
+        let style = ReprComponentKind::Delimiter.display_style(true);
         (format!("{style}[{style:#}"), format!("{style}]{style:#}"))
     } else {
         ("[".to_string(), "]".to_string())
     };
     let comma = if options.colored {
-        let style = ReprStyle::Separator.display_style(true);
+        let style = ReprComponentKind::Separator.display_style(true);
         format!(
             "{style},{style:#}{}",
             if options.compact { "" } else { " " }
@@ -107,7 +188,7 @@ pub fn array_representation(value: &Binary<'_>, options: &ArrayFormatOptions) ->
             .iter()
             .map(|b| {
                 if options.colored {
-                    let style = ByteStyle::ascii_char_display_style(b, true);
+                    let style = ByteKind::ascii_char_display_style(b, true);
                     format!(
                         "{style}{}{style:#}",
                         options.radix_format.format(b, options.compact)
