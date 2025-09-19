@@ -117,9 +117,9 @@
 //!
 
 use crate::{
-    Binary,
     error::Error,
     repr::{BinaryFormatOptions, ByteKind, RadixFormat, ReprComponentKind},
+    Binary,
 };
 use alloc::{
     format,

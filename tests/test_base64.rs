@@ -2,8 +2,8 @@
 
 use pretty_assertions::assert_eq;
 use wrapbin::{
+    repr::base64::{base64_representation, parse_base64_representation, Base64FormatOptions},
     Binary,
-    repr::base64::{Base64FormatOptions, base64_representation, parse_base64_representation},
 };
 
 // ------------------------------------------------------------------------------------------------

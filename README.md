@@ -19,13 +19,6 @@ where a `&str` value has `as_bytes()` returning `&[u8]` we store the borrowed
 value; however, where a `String`'s `into_bytes()` method returns `Vec<u8>` we
 store the owned value.
 
-For information on contributing to this project, see the following.
-
-1. Project [Code of Conduct](https://github.com/johnstonskj/rust-wrapbin/blob/main/CODE_OF_CONDUCT.md).
-1. Project [Contribution Guidelines](https://github.com/johnstonskj/rust-wrapbin/blob/main/CONTRIBUTING.md).
-1. Project [TODO Items](<https://github.com/johnstonskj/rust-wrapbin/issues>) in Issues.
-1. Repository [Change Log](https://github.com/johnstonskj/rust-wrapbin/blob/main/CHANGELOG.md).
-
 ## Features
 
 - **alloc**; Requires the Rust `alloc` crate when built as `no_std`. **Default**.
@@ -194,5 +187,9 @@ Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall
 be dual licensed as above, without any additional terms or conditions.
 
-See [CONTRIBUTING](https://github.com/johnstonskj/rust-wrapbin/blob/main/CONTRIBUTING.md) and the
-project's [CODE_OF_CONDUCT](https://github.com/johnstonskj/rust-wrapbin/blob/main/CODE_OF_CONDUCT.md).
+For information on contributing to this project, see the following.
+
+1. Project [Code of Conduct](https://github.com/johnstonskj/rust-wrapbin/blob/main/CODE_OF_CONDUCT.md).
+1. Project [Contribution Guidelines](https://github.com/johnstonskj/rust-wrapbin/blob/main/CONTRIBUTING.md).
+1. Project [TODO Items](<https://github.com/johnstonskj/rust-wrapbin/issues>) in Issues.
+1. Repository [Change Log](https://github.com/johnstonskj/rust-wrapbin/blob/main/CHANGELOG.md).

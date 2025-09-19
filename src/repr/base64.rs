@@ -25,9 +25,9 @@
 //! ```
 //!
 
-use crate::{Binary, error::Error, repr::BinaryFormatOptions};
+use crate::{error::Error, repr::BinaryFormatOptions, Binary};
 use alloc::string::String;
-use base64::prelude::{BASE64_STANDARD, BASE64_STANDARD_NO_PAD, Engine as _};
+use base64::prelude::{Engine as _, BASE64_STANDARD, BASE64_STANDARD_NO_PAD};
 use core::{
     clone::Clone,
     cmp::{Eq, PartialEq},
